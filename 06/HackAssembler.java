@@ -6,8 +6,7 @@ public class HackAssembler {
     static int L_COMMAND = 2;
     static int VAR = 16;
 
-    public static void firstPass(HackParser parser,
-                                 HackST st, String fileName) {
+    public static void firstPass(HackParser parser, HackST st) {
         int counter = -1;
         String symbol = null;
         while (parser.hasMoreCommands()) {
@@ -93,7 +92,7 @@ public class HackAssembler {
         HackCodeGen codeGen = new HackCodeGen();
         HackST st = new HackST();
 
-        firstPass(parser, st, fileName);
+        firstPass(parser, st);
 
         parser = new HackParser(fileName);
         String outName = fileName.split("[.]")[0] + "_YX.hack";
