@@ -71,21 +71,18 @@ public class VMCodeGen {
 
     private void writeNotCommand() {
         output.println("@SP");
-        output.println("A=M");
-        output.println("A=A-1");
+        output.println("A=M-1");
         output.println("M=!M");
     }
 
     private void writeNegCommand() {
         output.println("@SP");
-        output.println("A=M");
-        output.println("A=A-1");
+        output.println("A=M-1");
         output.println("D=M");
         output.println("@0");
         output.println("D=A-D");
         output.println("@SP");
-        output.println("A=M");
-        output.println("A=A-1");
+        output.println("A=M-1");
         output.println("M=D");
     }
 
