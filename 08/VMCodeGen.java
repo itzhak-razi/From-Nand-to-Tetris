@@ -53,22 +53,14 @@ public class VMCodeGen {
         else { return; }
     }
 
-    private void writeAddCommand() {
-        writeBasicArithCommand("M=D+M");
+    private void writeAddCommand() { writeBasicArithCommand("M=D+M"); }
+
+    private void writeSubCommand() { writeBasicArithCommand("M=M-D"); }
+
+    private void writeAndCommand() { writeBasicArithCommand("M=D&M"); 
     }
 
-    private void writeSubCommand() {
-        writeBasicArithCommand("M=M-D");
-    }
-
-    private void writeAndCommand() {
-        writeBasicArithCommand("M=D&M");
-        
-    }
-
-    private void writeOrCommand() {
-        writeBasicArithCommand("M=D|M");
-    }
+    private void writeOrCommand() { writeBasicArithCommand("M=D|M"); }
 
     private void writeBasicArithCommand(String insert) {
         output.println("@SP");
@@ -99,17 +91,11 @@ public class VMCodeGen {
     }
 
     // Eq, Gt and Lt
-    private void writeEqCommand() {
-        writeLogicCommand(EQ);
-    }
+    private void writeEqCommand() { writeLogicCommand(EQ); }
 
-    private void writeGtCommand() {
-        writeLogicCommand(GT);
-    }
+    private void writeGtCommand() { writeLogicCommand(GT); }
 
-    private void writeLtCommand() {
-        writeLogicCommand(LT);
-    }
+    private void writeLtCommand() { writeLogicCommand(LT); }
 
     private void writeLogicCommand(int logic) {
         String trueTag = "TRUE_", continueTag = "CON_", command = null;
@@ -129,7 +115,7 @@ public class VMCodeGen {
         writeBasicLogicCommand(trueTag, continueTag, command);
     }
 
-    void writeBasicLogicCommand(String trueTag, String continueTag,
+    private void writeBasicLogicCommand(String trueTag, String continueTag,
                                 String command) {
         output.println("@SP");
         output.println("A=M-1");
@@ -184,7 +170,7 @@ public class VMCodeGen {
         else { return; }
     }
 
-    void writePointerPushPopCommand(int command, String segment) {
+    public void writePointerPushPopCommand(int command, String segment) {
         if (command == CT.C_PUSH) {
             output.printf("@%s\n", segment);
             output.println("D=M");
@@ -272,9 +258,6 @@ public class VMCodeGen {
     }
 
 
-
-
-
     /* Program flow and function calling
     */
 
@@ -312,9 +295,7 @@ public class VMCodeGen {
         output.println("D;JNE");
     }
     
-    private String generateLabel(String label) {
-        return (functionName + "$" + label);
-    }
+    private String generateLabel(String label) { return (functionName + "$" + label); }
 
     public void writeCall(String fName, int numArgs) {
         

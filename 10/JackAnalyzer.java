@@ -7,7 +7,6 @@ public class JackAnalyzer {
         File file = new File(filename);
         String[] children = null;
         String outputName = null; 
-        boolean isDirectory = false; 
 
         if (file.isFile()) {
             if (filename.contains(".jack")) {
@@ -22,7 +21,6 @@ public class JackAnalyzer {
             String[] outputNames = file.getAbsolutePath().split("/");
             outputName = outputNames[outputNames.length - 2] + ".asm";
             children = file.list();
-            isDirectory = true;
         } else {
             System.out.println(outputName);
             outputName = null;

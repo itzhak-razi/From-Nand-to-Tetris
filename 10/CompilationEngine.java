@@ -16,7 +16,7 @@ public class CompilationEngine {
             // write class
             output.println(spacing + "<class>");
             increaseSpacing();
-            
+
             writeTag(tokenizer.token(), "keyword");
 
             // write class name
@@ -53,7 +53,7 @@ public class CompilationEngine {
 
             // write }
             if (!checkSymbol("}")) {
-                System.out.println("no closing } for class");
+                System.out.printf("%s %d %d: is not closing } for class\n", tokenizer.token(), tokenizer.tokenType(), tokenizer.keyword());
                 return;
             }
 
@@ -79,9 +79,9 @@ public class CompilationEngine {
 
         // match type
         tokenizer.advance();
-        if (!checkAndWriteType()) { 
+        if (!checkAndWriteType()) {
             System.out.println("illegal type for class var dec");
-            return; 
+            return;
         }
 
         // match varName
@@ -188,7 +188,7 @@ public class CompilationEngine {
             System.out.println("no { after function parameters");
             return;
         }
-        
+
         // the closing } is matched in compileSubroutineBody()
 
         // decrease spacing
@@ -251,9 +251,8 @@ public class CompilationEngine {
             tokenizer.advance();
         }
 
-        // TODO: make sure what's returned here is the beginning of statements, not ;
         compileStatements();
-        
+
         // match }
         if (!checkSymbol("}")) {
             System.out.println("no } found to close subroutine call");
@@ -265,7 +264,6 @@ public class CompilationEngine {
     }
 
     public void compileVarDec() {
-        // TODO: make sure ; is printed and token is advanced to the next
         output.println(spacing + "<varDec>");
         increaseSpacing();
 
@@ -315,10 +313,9 @@ public class CompilationEngine {
     }
 
     public void compileStatements() {
-        // TODO: make sure ; is printed and token is advanced to the next
         output.println(spacing + "<statements>");
         increaseSpacing();
-
+        
         while (tokenizer.tokenType() == JackTokens.KEYWORD) {
             int keyword_type = tokenizer.keyword();
             // compileIf needs to do one token look ahead to check "else",
@@ -350,7 +347,7 @@ public class CompilationEngine {
         if (s.equals("<")) { s = "&lt;"; }
         else if (s.equals(">")) { s = "&gt;"; }
         else if (s.equals("&")) { s = "&amp;"; }
-        
+
         if (tokenizer.symbol().equals(s)) {
             writeTag(s, "symbol");
             return true;
@@ -386,8 +383,6 @@ public class CompilationEngine {
             tokenizer.advance();
             compileExpression();
 
-            // TODO: make sure if needs to advance here
-            //tokenizer.advance();
             if(!checkSymbol("]")) {
                 System.out.printf("No closing ], current: %s\n", tokenizer.token());
                 return;
@@ -403,9 +398,8 @@ public class CompilationEngine {
 
         tokenizer.advance();
         compileExpression();
-        
+
         // No need to advance because compileExpression does one token look ahead
-        //tokenizer.advance();
         if (!checkSymbol(";")) {
             System.out.println("No ; found at the end of statement");
             return;
@@ -445,7 +439,6 @@ public class CompilationEngine {
         tokenizer.advance();
         compileStatements();
 
-        //FIXME: tokenizer.advance();
         if (!checkSymbol("}")) {
             System.out.println("No } for if statement");
             System.out.printf("the current symbol is %s\n", tokenizer.token());
@@ -468,6 +461,7 @@ public class CompilationEngine {
                 System.out.println("No } for if statement");
                 return;
             }
+            tokenizer.advance();
         }
 
         decreaseSpacing();
@@ -607,10 +601,10 @@ public class CompilationEngine {
         } else if (tokenizer.tokenType() == JackTokens.IDENTIFIER) {
             writeTag(tokenizer.identifier(), "identifier");
             tokenizer.advance();
-            if (checkSymbol("[")) { 
-                compileArrayTerm(); 
+            if (checkSymbol("[")) {
+                compileArrayTerm();
                 tokenizer.advance();
-            } else if (checkSymbol("(") || checkSymbol(".")) { 
+            } else if (checkSymbol("(") || checkSymbol(".")) {
                 compileSubRoutineCall();
                 tokenizer.advance();
             }
@@ -681,7 +675,7 @@ public class CompilationEngine {
     public void compileExpressionList() {
         output.println(spacing + "<expressionList>");
         increaseSpacing();
-        
+
         if (!tokenizer.symbol().equals(")")) {
             compileExpression();
 

@@ -4,6 +4,8 @@ import java.io.File;
 public class VMTranslator {
     public static void writeAssemblyCode(String file, VMCodeGen codeGen) {
         VMParser parser = new VMParser(file);
+        String _file = file.split("[.]")[0];
+        codeGen.setFileName(_file);
         while (parser.hasMoreCommands()) {
             parser.advance();
             int currentCT = parser.commandType();

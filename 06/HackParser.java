@@ -26,7 +26,7 @@ public class HackParser {
         } while (currentLine.equals("") ||
                  currentLine.substring(0,2).equals("//"));
         String[] parts = currentLine.split("//");
-        currentCommand = parts[0].trim();
+        currentCommand = parts[0];
         currentCommand = currentCommand.replace(" ", "");
     }
 

@@ -1,3 +1,9 @@
+/* To fix the static problem
+ * 1. delete static from hashtable
+ * 2. change push
+ * 3. change pop
+ */
+
 import java.util.Hashtable;
 
 public class VMCodeGen {
@@ -15,12 +21,11 @@ public class VMCodeGen {
         outputName = out;
         output = new Out(outputName);
         ramName = new Hashtable<String, String>();
-        ramName.put("local", "LCL");
+        ramName.put("local", "LCL\n");
         ramName.put("argument", "ARG");
         ramName.put("this", "THIS");
         ramName.put("that", "THAT");
         ramName.put("temp", "5");
-        ramName.put("static", "16");
     }
 
     public void setFileName(String fn) {
@@ -207,15 +212,20 @@ public class VMCodeGen {
             output.println("M=D");
             return;
         }
+        if (segment.equals("static")) {
+            segment = filename + "." + Integer.toString(index);
+        }
         output.printf("@%s\n", segment);
-        if (segment.equals("5") || segment.equals("16")) {
+        if (segment.equals("5")) { 
             output.println("D=A");
         } else {
             output.println("D=M");
         }
-        output.printf("@%d\n", index);
-        output.println("A=D+A");
-        output.println("D=M");
+        if (!segment.contains(filename)) {
+            output.printf("@%d\n", index);
+            output.println("A=D+A");
+            output.println("D=M");
+        }
         output.println("@SP");
         output.println("A=M");
         output.println("M=D");
@@ -225,14 +235,19 @@ public class VMCodeGen {
     }
 
     private void writePopCommand(String segment, int index) {
+        if (segment.equals("static")) {
+            segment = filename + "." + Integer.toString(index);
+        }
         output.printf("@%s\n", segment); // locate segment register A
-        if (segment.equals("5") || segment.equals("16")) {
+        if (segment.equals("5") || segment.contains(filename)) {
             output.println("D=A");
         } else {
             output.println("D=M"); // read in segments address D
         }
-        output.printf("@%d\n", index); // A has the index
-        output.println("D=D+A"); // D has the right address
+        if (!segment.contains(filename)) {
+            output.printf("@%d\n", index); // A has the index
+            output.println("D=D+A"); // D has the right address
+        }
         output.println("@R13"); // A has temp register
         output.println("M=D"); // temp = right address
         output.println("@SP"); // A has the stack pointer register
@@ -248,5 +263,10 @@ public class VMCodeGen {
         output.println("D=A"); // D has the SP address now
         output.println("@SP"); // a has the SP register
         output.println("M=D"); // sp register stores the right address
+    }
+
+    public static void main(String[] args) {
+        String test = "Static.3";
+        System.out.println(test.contains("Static"));
     }
 }
