@@ -1,0 +1,165 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/12/Screen.jack
+
+/**
+ * Graphic screen library.
+ */
+class Screen 
+{
+    static boolean isBlack;
+    static int SCREEN_ADDR;
+    static int KEYBOARD_ADDR;
+    static Array twoToThe;
+
+    /** Initializes the Screen. */
+    function void init() 
+    {
+        var int i;
+        var int currentVal;
+        
+        let twoToThe = Array.new(16);
+        let isBlack = true;
+        let SCREEN_ADDR = 16384;
+        let KEYBOARD_ADDR = 24576;
+
+        let currentVal = 1;
+        let i = 0;
+        while(i < 16)
+        {
+            let twoToThe[i] = currentVal;
+            let currentVal = currentVal + currentVal;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    /** Erases the whole screen. */
+    function void clearScreen() 
+    {
+        var int i;
+
+        let i = SCREEN_ADDR;
+        while(i < KEYBOARD_ADDR)
+        {
+            do Memory.poke(i, 0);
+            let i = i + 1;
+        }
+        return;
+    }
+
+    /** Sets the color to be used in further draw commands
+     *  where white = false, black = true. */
+    function void setColor(boolean b) 
+    {
+        let isBlack = b;
+        return;
+    }
+
+    /** Draws the (x, y) pixel. */
+    function void drawPixel(int x, int y) 
+    {
+        var int addr;
+        var int pixelValue;
+        var int bitIndex;
+        var int xDiv16;
+
+        if((x < 0) | (x > 511) | (y < 0) | (y > 255))
+        {
+            do Sys.error(7);
+        }
+
+        let xDiv16 = x / 16;
+        let bitIndex = x - (xDiv16 * 16);
+        let addr = SCREEN_ADDR + ((y * 32) + xDiv16);
+        let pixelValue = Memory.peek(addr);
+        if(isBlack)
+        {
+            let pixelValue = twoToThe[bitIndex] | pixelValue;
+        }
+        else
+        {
+            let pixelValue = (~twoToThe[bitIndex]) & pixelValue;
+        }
+        do Memory.poke(addr, pixelValue);
+        return;
+    }
+
+    /** Draws a line from pixel (x1, y1) to (x2, y2). */
+    function void drawLine(int x1, int y1, int x2, int y2) 
+    {
+        var int adyMinusbdx; //autoinitialized to 0
+        var int a, b, dx, dy;
+        var int xBase, xEnd;
+        var int yBase, yEnd;
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+
+        if(dx = 0)
+        {
+            let yBase = y2;
+            let yEnd = y1;
+            if(y1 < y2)
+            {
+                let yBase = y1;
+                let yEnd = y2;
+            }
+            while(~(yBase > yEnd)) //yBase <= yEnd
+            {
+                do Screen.drawPixel(x1, yBase);
+                let yBase = yBase + 1;
+            }
+        }
+        if(dy = 0)
+        {
+            let xBase = x2;
+            let xEnd = x1;
+            if(x1 < x2)
+            {
+                let xBase = x1;
+                let xEnd = x2;
+            }
+            while(~(xBase > xEnd)) //xBase <= xEnd
+            {
+                do Screen.drawPixel(xBase, y1);
+                let xBase = xBase + 1;
+            }
+        }
+        while((~(a > dx)) & (~(b > dy)))
+        {
+            do Screen.drawPixel(x1 + a, y1 + b);
+            if(adyMinusbdx < 0)
+            {
+                let a = a + 1;
+                let adyMinusbdx = adyMinusbdx + dy;
+            }
+            else
+            {
+                let b = b + 1;
+                let adyMinusbdx = adyMinusbdx - dx;
+            }
+        }
+        return;
+    }
+
+    /** Draws a filled rectangle where the top left corner
+     *  is (x1, y1) and the bottom right corner is (x2, y2). */
+    function void drawRectangle(int x1, int y1, int x2, int y2) 
+    {
+        var int yCounter;
+        let yCounter = y1;
+        while(yCounter < y2)
+        {
+            do Screen.drawLine(x1, yCounter, x2, yCounter);
+            let yCounter = yCounter + 1;
+        }
+        return;
+    }
+
+    /** Draws a filled circle of radius r around (cx, cy). */
+    function void drawCircle(int cx, int cy, int r) 
+    {
+        return;
+    }
+}

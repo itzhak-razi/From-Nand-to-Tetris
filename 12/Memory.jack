@@ -1,0 +1,97 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/12/Memory.jack
+
+/**
+ * Memory operations library.
+ */ 
+class Memory 
+{
+    
+    static int LENGTH_INDEX;
+    static int NEXT_INDEX;
+    static Array freeList;
+
+    /** Initializes memory parameters. */
+    function void init() 
+    {
+        var Array next;
+        let LENGTH_INDEX = 0;
+        let NEXT_INDEX = 1;
+        let freeList = 2048;
+        let freeList[LENGTH_INDEX] = 2;
+        let freeList[NEXT_INDEX] = 2050;
+        let next = freeList[NEXT_INDEX];
+        let next[LENGTH_INDEX] = 16382;
+        let next[NEXT_INDEX] = null;
+        return;
+    }
+
+    /** Returns the value of the main memory at this address. */
+    function int peek(int address) 
+    {
+        var Array memory;
+        let memory = 0;
+        return memory[address];
+    }
+
+    /** Sets the value of the main memory at this address
+     *  to the given value. */
+    function void poke(int address, int value) 
+    {
+        var Array memory;
+        let memory = 0;
+        let memory[address] = value;
+        return;
+    }
+
+    /** finds and allocates from the heap a memory block of the 
+     *  specified size and returns a reference to its base address. */
+    function int alloc(int size) 
+    {
+        var Array block;
+        var Array prev;
+        var Array next;
+
+        let block = freeList;
+        while(~(block[LENGTH_INDEX] > size))
+        {
+            if(block[NEXT_INDEX] = null)
+            {
+                do Sys.error(6);
+                return -1;
+            }
+            else
+            {
+                let prev = block;
+                let block = block[NEXT_INDEX];
+            }
+        }
+        if(~(block[LENGTH_INDEX] = size + 1))
+        {
+            let next = block + size + 1;
+            let next[LENGTH_INDEX] = block[LENGTH_INDEX] - (size + 1);
+            let next[NEXT_INDEX] = block[NEXT_INDEX];
+            let prev[NEXT_INDEX] = next;
+        }
+        let block[LENGTH_INDEX] = size + 1;
+        return block + 1;
+    }
+
+    /** De-allocates the given object and frees its space. */
+    function void deAlloc(int object) 
+    {
+        var Array node;
+        var Array deAllocated;
+        let deAllocated = object - 1;
+        let deAllocated[NEXT_INDEX] = null;
+        let node = freeList;
+        while(~(node[NEXT_INDEX] = null))
+        {
+            let node = node[NEXT_INDEX];
+        }
+        let node[NEXT_INDEX] = deAllocated;
+        return;
+    }
+}

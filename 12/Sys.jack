@@ -1,0 +1,63 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/12/Sys.jack
+
+/**
+ * A basic system services library.
+ */
+class Sys 
+{
+    static int WAIT_TIME;
+
+    /** Makes all required initializations. */
+    function void init() 
+    {
+        let WAIT_TIME = 50;
+        do Memory.init();
+        do Math.init();
+        do Output.init();
+        do Screen.init();
+        do Keyboard.init();
+        do Main.main();
+        do Sys.halt();
+        return;
+    }
+
+    /** Halts the execution. */
+    function void halt() 
+    {
+        while(true){}
+        return;
+    }
+
+    /** Waits approximately duration milliseconds before it returns. */
+    function void wait(int duration) 
+    {
+        var int i;
+        var int j;
+        while(i < duration)
+        {
+            let j = 0;
+            while(j < WAIT_TIME)
+            {
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+
+    /** prints the given error code in the form "ERR<errorCode>",
+     *  and halts. */
+    function void error(int errorCode) 
+    {
+        var String codeString;
+        let codeString = String.new(2);
+        do Output.printString("ERR");
+        do codeString.setInt(errorCode);
+        do Output.printString(codeString);
+        do Sys.halt();
+        return;
+    }
+}

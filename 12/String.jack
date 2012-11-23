@@ -1,0 +1,162 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/12/String.jack
+
+/**
+ * The String type.
+ */
+class String 
+{
+    static int zeroAsciiVal;
+    field int maximumLength;
+    field int actualLength;
+    field Array string;
+
+
+    /** Constructs a new empty String with a maximum length of
+     *  maxLength. */
+    constructor String new(int maxLength) 
+    {
+        let zeroAsciiVal = 48;
+        let actualLength = 0;
+        let maximumLength = maxLength;
+        if(maximumLength < 1)
+        {
+            let maximumLength = 1;
+        }
+        let string = Array.new(maximumLength);
+        return this;
+    }
+
+    /** De-allocates the string and frees its space. */
+    method void dispose() 
+    {
+        let actualLength = 0;
+        let maximumLength = 0;
+        do string.dispose();
+        return;
+    }
+
+    /** Returns the current length of this String. */
+    method int length() 
+    {
+        return actualLength;
+    }
+
+    /** Returns the character at location j. */
+    method char charAt(int j) 
+    {
+        return string[j];
+    }
+
+    /** Sets the j'th character of this string to be c. */
+    method void setCharAt(int j, char c) 
+    {
+        let string[j] = c;
+        return;
+    }
+
+    /** Appends the character c to the end of this String.
+     *  Returns this string as the return value. */
+    method String appendChar(char c) 
+    {
+        if(actualLength = maximumLength)
+        {
+            do Sys.error(17);
+        }
+        let string[actualLength] = c;
+        let actualLength = actualLength + 1;
+        return this;
+    }
+
+    /** Erases the last character from this String. */
+    method void eraseLastChar() 
+    {
+        let actualLength = actualLength - 1;
+        if(actualLength < 0)
+        {
+            do Sys.error(18);
+        }
+        return;
+    }
+
+    /** Returns the integer value of this String until the first non
+     *  numeric character. */
+    method int intValue() 
+    {
+        var int i;
+        var int retVal;
+        var boolean isNeg;
+        
+        let isNeg = false;
+        let retVal = 0;
+        let i = 0;
+        if(string[i] = 45) //45 is the ascii value of '-'
+        {
+            let isNeg = true;
+            let i = i + 1;
+        }
+        while(i < actualLength)
+        {
+            let retVal = (string[i] - zeroAsciiVal) + (retVal * 10);
+            let i = i + 1;
+        }
+        if(isNeg)
+        {
+            let retVal = retVal * -1;
+        }
+        return retVal;
+    }
+
+    /** Sets this String to hold a representation of the given
+     *  number. */
+    method void setInt(int number) 
+    {
+        var int num;
+        var boolean negative;
+        let num = number;
+        let actualLength = 0;
+        if(num < 0)
+        {
+            let num = num * -1;
+            do appendChar(45); //45 is the ASCII value of '-'
+        }
+        do setIntWorker(num);
+        return;
+    }
+
+    method void setIntWorker(int number)
+    {
+        var int lastChar;
+        var int restOfNum;
+        if(number = 0)
+        {
+            return;
+        }
+        let restOfNum = number / 10;
+        let lastChar = number - (restOfNum * 10);
+        do setIntWorker(restOfNum);
+        do appendChar(lastChar + 48);
+        return;
+    }
+
+    /** Returns the new line character. */
+    function char newLine() 
+    {
+        return 128;
+    }
+
+    /** Returns the backspace character. */
+    function char backSpace() 
+    {
+        return 129;
+    }
+
+    /** Returns the double quote (") character. */
+    function char doubleQuote() 
+    {
+        return 34;
+    }
+
+}
